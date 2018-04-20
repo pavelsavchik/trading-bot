@@ -5,11 +5,30 @@ import com.getbux.common.TradingRequest;
 public class TradingRequestReader {
 
     public TradingRequest read() {
+
         TradingRequest tradingRequest = new TradingRequest();
-        tradingRequest.setProductId("sb26493");
-        tradingRequest.setBuyPrice(12535.);
-        tradingRequest.setLowerLimitSellPrice(12534.5);
-        tradingRequest.setUpperLimitSellPrice(12536.9);
+        ConsoleReader consoleReader = new ConsoleReader();
+
+        System.out.println("Please specify product id:");
+        tradingRequest.setProductId(consoleReader.readString());
+
+        System.out.println("Please specify buy price:");
+        tradingRequest.setBuyPrice(
+                consoleReader.readDouble(0.)
+        );
+
+        System.out.println("Please specify upper limit sell price:");
+        tradingRequest.setUpperLimitSellPrice(
+                consoleReader.readDouble(tradingRequest.getBuyPrice())
+        );
+
+        System.out.println("Please specify lower limit sell price:");
+        tradingRequest.setLowerLimitSellPrice(
+                consoleReader.readDouble(0., tradingRequest.getBuyPrice())
+        );
+
+        System.out.println("I got you! Now please wait.");
+
         return tradingRequest;
     }
 

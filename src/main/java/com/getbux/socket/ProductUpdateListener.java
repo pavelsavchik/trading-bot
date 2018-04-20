@@ -83,6 +83,7 @@ public class ProductUpdateListener extends WebSocketAdapter {
                 System.out.println("Failed trading quote message processing, message is ignored.");
                 return;
             }
+            System.out.println("Current price is " + tradingQuote.getCurrentPrice());
             lastTradingResult = tradingService.process(tradingQuote, tradingRequest, lastTradingResult);
             if (lastTradingResult.isSold()) {
                 socket.disconnect();

@@ -4,6 +4,8 @@ import com.getbux.api.TradingAPIClient;
 import com.getbux.socket.TradingQuote;
 import com.getbux.common.TradingRequest;
 import com.getbux.socket.TradingResult;
+import com.getbux.utils.PriceUtils;
+
 import java.io.IOException;
 
 public class TradingService {
@@ -13,14 +15,15 @@ public class TradingService {
         TradingResult tradingResult = new TradingResult(lastTradingResult);
         Double currentPrice = tradingQuote.getCurrentPrice();
 
-        if (!lastTradingResult.isBought()) {
-            //TODO: replace equals by comparision with precision
-            if (currentPrice.equals(tradingRequest.getBuyPrice())) {
+        if (!tradingResult.isBought()) {
+            if (PriceUtils.equals(currentPrice, tradingRequest.getBuyPrice())) {
                 String positionId = TradingAPIClient.buy(tradingRequest);
                 tradingResult.setPositionId(positionId);
             }
         } else {
-            if (currentPrice >= tradingRequest.getUpperLimitSellPrice() || currentPrice <= tradingRequest.getLowerLimitSellPrice()) {
+            if (PriceUtils.inRange(currentPrice,
+                    tradingRequest.getLowerLimitSellPrice(),
+                    tradingRequest.getUpperLimitSellPrice())) {
                 TradingAPIClient.sell(tradingRequest);
             }
         }
