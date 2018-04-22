@@ -22,6 +22,11 @@ public class TradingService {
 
     public TradingResult process(TradingQuote tradingQuote, TradingRequest tradingRequest, TradingResult lastTradingResult)
             throws IOException {
+
+        if(tradingQuote == null || tradingRequest == null) {
+            return null;
+        }
+
         TradingResult tradingResult = new TradingResult(lastTradingResult);
         Double currentPrice = tradingQuote.getCurrentPrice();
 
