@@ -25,16 +25,17 @@ public class TradingService {
         TradingResult tradingResult = new TradingResult(lastTradingResult);
         Double currentPrice = tradingQuote.getCurrentPrice();
 
-        if (!tradingResult.isBought()) {
+        if (tradingResult.getPositionId() == null) {
             if (PriceUtils.equals(currentPrice, tradingRequest.getBuyPrice())) {
                 String positionId = apiClient.buy(tradingRequest);
                 tradingResult.setPositionId(positionId);
             }
         } else {
-            if (PriceUtils.inRange(currentPrice,
+            if (!PriceUtils.inRange(currentPrice,
                     tradingRequest.getLowerLimitSellPrice(),
                     tradingRequest.getUpperLimitSellPrice())) {
                 apiClient.sell(tradingRequest);
+                tradingResult.setSold(true);
             }
         }
 
