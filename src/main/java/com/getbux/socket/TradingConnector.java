@@ -5,17 +5,15 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import java.io.IOException;
+
+import static com.getbux.configuration.AppConfiguration.SOCKET_CONNECTION_ATTEMPTS;
+import static com.getbux.configuration.AppConfiguration.SOCKET_CONNECTION_TIMEOUT;
+import static com.getbux.configuration.AppConfiguration.SUBSCRIPTION_URL;
 import static com.getbux.constants.Headers.*;
 
 public class TradingConnector {
 
-    private static final String SUBSCRIPTION_URL = "https://rtf.beta.getbux.com/subscriptions/me";
-
-    private static final Integer SOCKET_CONNECTION_TIMEOUT = 5000;
-
     private static final WebSocketFactory webSocketFactory;
-
-    private static final Integer ATTEMPTS = 3;
 
     static {
         webSocketFactory = new WebSocketFactory().setConnectionTimeout(SOCKET_CONNECTION_TIMEOUT);
@@ -23,7 +21,7 @@ public class TradingConnector {
 
     public void connect(TradingRequest tradingRequest) {
 
-        for(int i = 0; i < ATTEMPTS; i++) {
+        for(int i = 0; i < SOCKET_CONNECTION_ATTEMPTS; i++) {
             try {
                 WebSocket socket = initializeSocket();
                 socket.addListener(new ProductUpdateListener(tradingRequest));

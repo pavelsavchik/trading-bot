@@ -17,6 +17,7 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind:2.4.1'
     compile 'org.apache.httpcomponents:fluent-hc:4.5.5'
     compile 'org.apache.commons:commons-lang3:3.0'
+    compile 'org.apache.commons:commons-configuration2:2.2'
 
     testCompile 'cglib:cglib-nodep:3.2.6'
     testCompile 'org.objenesis:objenesis:2.6'

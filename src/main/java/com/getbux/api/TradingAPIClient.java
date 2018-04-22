@@ -7,20 +7,18 @@ import java.io.IOException;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
 
+import static com.getbux.configuration.AppConfiguration.API_URL;
+import static com.getbux.configuration.AppConfiguration.BUY_PATH;
+import static com.getbux.configuration.AppConfiguration.SELL_PATH;
 import static com.getbux.constants.Headers.*;
 import static com.getbux.utils.JSONUtils.mapper;
 
 public class TradingAPIClient {
 
-    private static final String API_URL = "https://api.beta.getbux.com/";
-
-    private static final String BUY_ENDPOINT = "core/16/users/me/trades";
-
-    private static final String SELL_ENDPOINT = "core/16/users/me/portfolio/positions/";
 
     public static String buy(TradingRequest tradingRequest) throws IOException {
-        String url = API_URL + BUY_ENDPOINT;
-        BuyRequest buyRequest = new BuyRequest(tradingRequest.getProductId());
+        String url = API_URL + BUY_PATH;
+        BuyRequest buyRequest = new DefaultBuyRequest(tradingRequest.getProductId());
         String body = mapper.writeValueAsString(buyRequest);
 
         HttpResponse response = executeRequest(Request.Post(url), body);
@@ -31,7 +29,7 @@ public class TradingAPIClient {
     }
 
     public static void sell(TradingRequest tradingRequest) throws IOException {
-        String url = API_URL + SELL_ENDPOINT + tradingRequest.getProductId();
+        String url = API_URL + SELL_PATH + tradingRequest.getProductId();
 
         HttpResponse response = executeRequest(Request.Delete(url), null);
 

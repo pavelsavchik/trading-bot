@@ -1,19 +1,20 @@
 package com.getbux.api;
 
-class BuyRequest {
+public class BuyRequest {
 
     private String productId;
 
-    private InvestingAmount investingAmount = new InvestingAmount();
+    private InvestingAmount investingAmount;
 
-    private Integer leverage = 2;
+    private Integer leverage;
 
-    private String direction = "BUY";
+    private String direction;
 
-    private class InvestingAmount {
-        private String currency = "BUX";
-        private Integer decimals = 2;
-        private String amount = "200.00";
+    public BuyRequest(String productId, InvestingAmount investingAmount, Integer leverage, String direction) {
+        this.productId = productId;
+        this.investingAmount = investingAmount;
+        this.leverage = leverage;
+        this.direction = direction;
     }
 
     public String getProductId() {
@@ -34,10 +35,6 @@ class BuyRequest {
 
     public String getDirection() {
         return direction;
-    }
-
-    BuyRequest(String productId) {
-        this.productId = productId;
     }
 
 }

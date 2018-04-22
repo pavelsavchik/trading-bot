@@ -1,12 +1,12 @@
 package com.getbux.utils;
 
-public class PriceUtils {
+import static com.getbux.configuration.AppConfiguration.PRICE_PRECISION;
 
-    private static final Double precision = 0.001;
+public class PriceUtils {
 
     public static boolean equals(Double first, Double second) {
         Double diff = Math.abs(first - second);
-        return diff < precision;
+        return diff < PRICE_PRECISION;
     }
 
     public static boolean inRange(Double value, Double lowerBound, Double upperBound) {
