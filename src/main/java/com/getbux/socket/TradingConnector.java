@@ -1,27 +1,31 @@
 package com.getbux.socket;
 
-import com.getbux.common.TradingRequest;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import com.neovisionaries.ws.client.WebSocketListener;
+
 import java.io.IOException;
 
 import static com.getbux.configuration.AppConfiguration.*;
 
 public class TradingConnector {
 
-    private static final WebSocketFactory webSocketFactory;
+    private final WebSocketFactory webSocketFactory;
 
-    static {
-        webSocketFactory = new WebSocketFactory().setConnectionTimeout(SOCKET_CONNECTION_TIMEOUT);
+    public TradingConnector() {
+        this.webSocketFactory = new WebSocketFactory().setConnectionTimeout(SOCKET_CONNECTION_TIMEOUT);
     }
 
-    public void connect(TradingRequest tradingRequest) {
+    public TradingConnector(WebSocketFactory webSocketFactory) {
+        this.webSocketFactory = webSocketFactory;
+    }
 
+    public void connect(WebSocketListener listener) {
         for(int i = 0; i < SOCKET_CONNECTION_ATTEMPTS; i++) {
             try {
                 WebSocket socket = initializeSocket();
-                socket.addListener(new ProductUpdateListener(tradingRequest));
+                socket.addListener(listener);
                 socket.connect();
             } catch (IOException | WebSocketException exception) {
                 System.out.println("Exception: " + exception.getMessage());

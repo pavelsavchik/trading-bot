@@ -19,14 +19,14 @@ public class ProductUpdateListener extends WebSocketAdapter {
 
     private TradingResult lastTradingResult;
 
-    private TradingRequest tradingRequest;
+    private final TradingRequest tradingRequest;
 
-    ProductUpdateListener(TradingRequest tradingRequest) {
+    public ProductUpdateListener(TradingRequest tradingRequest) {
         this.tradingRequest = tradingRequest;
         this.tradingService = new TradingService();
     }
 
-    ProductUpdateListener(TradingRequest tradingRequest, TradingService tradingService) {
+    public ProductUpdateListener(TradingRequest tradingRequest, TradingService tradingService) {
         this.tradingRequest = tradingRequest;
         this.tradingService = tradingService;
     }
