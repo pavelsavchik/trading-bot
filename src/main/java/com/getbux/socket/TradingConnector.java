@@ -6,10 +6,7 @@ import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import java.io.IOException;
 
-import static com.getbux.configuration.AppConfiguration.SOCKET_CONNECTION_ATTEMPTS;
-import static com.getbux.configuration.AppConfiguration.SOCKET_CONNECTION_TIMEOUT;
-import static com.getbux.configuration.AppConfiguration.SUBSCRIPTION_URL;
-import static com.getbux.constants.Headers.*;
+import static com.getbux.configuration.AppConfiguration.*;
 
 public class TradingConnector {
 

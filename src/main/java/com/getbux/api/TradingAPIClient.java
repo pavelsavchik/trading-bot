@@ -7,10 +7,7 @@ import java.io.IOException;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.util.EntityUtils;
 
-import static com.getbux.configuration.AppConfiguration.API_URL;
-import static com.getbux.configuration.AppConfiguration.BUY_PATH;
-import static com.getbux.configuration.AppConfiguration.SELL_PATH;
-import static com.getbux.constants.Headers.*;
+import static com.getbux.configuration.AppConfiguration.*;
 import static com.getbux.utils.JSONUtils.mapper;
 
 public class TradingAPIClient {

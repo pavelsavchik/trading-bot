@@ -32,6 +32,22 @@ public class AppConfiguration {
 
     public static final Double PRICE_PRECISION;
 
+    public static final String AUTH_HEADER_NAME;
+
+    public static final String AUTH_HEADER_VALUE;
+
+    public static final String LANGUAGE_HEADER_NAME;
+
+    public static final String LANGUAGE_HEADER_VALUE;
+
+    public static final String CONTENT_TYPE_HEADER_NAME;
+
+    public static final String CONTENT_TYPE_HEADER_VALUE;
+
+    public static final String ACCEPT_HEADER_NAME;
+
+    public static final String ACCEPT_HEADER_VALUE;
+
     static {
         Configurations configs = new Configurations();
         Configuration config = null;
@@ -61,6 +77,16 @@ public class AppConfiguration {
         BUY_REQUEST_AMOUNT = config.getString("buy.request.amount");
 
         PRICE_PRECISION = config.getDouble("price.precision");
+
+        AUTH_HEADER_NAME = config.getString("headers.auth.name");
+        AUTH_HEADER_VALUE = config.getString("headers.auth.value");
+        LANGUAGE_HEADER_NAME = config.getString("headers.language.name");
+        LANGUAGE_HEADER_VALUE = config.getString("headers.language.value");
+        CONTENT_TYPE_HEADER_NAME = config.getString("headers.contentType.name");
+        CONTENT_TYPE_HEADER_VALUE = config.getString("headers.contentType.value");
+        ACCEPT_HEADER_NAME = config.getString("headers.accept.name");
+        ACCEPT_HEADER_VALUE = config.getString("headers.accept.value");
+
     }
 
     private static void terminate() {
