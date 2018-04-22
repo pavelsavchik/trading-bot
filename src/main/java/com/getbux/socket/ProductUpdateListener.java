@@ -1,12 +1,14 @@
 package com.getbux.socket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.getbux.service.TradingService;
 import com.getbux.common.TradingRequest;
+import com.getbux.service.TradingService;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
+
 import java.io.IOException;
+
 import static com.getbux.utils.JSONUtils.mapper;
 
 public class ProductUpdateListener extends WebSocketAdapter {
@@ -32,11 +34,9 @@ public class ProductUpdateListener extends WebSocketAdapter {
     @Override
     public void onTextMessage(WebSocket socket, String message) throws WebSocketException, IOException {
 
-        EventMessage eventMessage;
+        EventMessage eventMessage = parseEventMessage(message);
 
-        try {
-            eventMessage = mapper.readValue(message, EventMessage.class);
-        } catch (IOException exception) {
+        if(eventMessage == null) {
             return;
         }
 
@@ -55,6 +55,13 @@ public class ProductUpdateListener extends WebSocketAdapter {
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
+        System.out.println("An error occurred: " + cause.getMessage());
+        websocket.disconnect();
+        System.out.println("Disconnected");
     }
 
     private void processConnectMessage(WebSocket socket) throws JsonProcessingException {
@@ -89,5 +96,15 @@ public class ProductUpdateListener extends WebSocketAdapter {
                 socket.disconnect();
             }
         }
+    }
+
+    private EventMessage parseEventMessage(String message) {
+        try {
+            return mapper.readValue(message, EventMessage.class);
+        } catch (IOException exception) {
+            System.out.println("Can't parse message, ignore it");
+            return null;
+        }
+
     }
 }
