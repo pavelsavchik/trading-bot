@@ -1,7 +1,9 @@
 package com.getbux.ui;
 
 import com.getbux.common.TradingRequest;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TradingRequestReader {
 
     public TradingRequest read() {

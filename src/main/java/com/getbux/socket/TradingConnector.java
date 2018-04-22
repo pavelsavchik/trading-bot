@@ -4,11 +4,13 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketListener;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 import static com.getbux.configuration.AppConfiguration.*;
 
+@Component
 public class TradingConnector {
 
     private final WebSocketFactory webSocketFactory;

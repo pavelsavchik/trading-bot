@@ -1,17 +1,14 @@
 package com.getbux.socket
 
 import com.getbux.service.TradingService
-import com.getbux.socket.ProductUpdateListener
-import com.getbux.socket.TradingQuote
 import com.getbux.common.TradingRequest
-import com.getbux.socket.TradingResult
 import com.neovisionaries.ws.client.WebSocket
 import org.skyscreamer.jsonassert.JSONAssert
 import spock.lang.Specification
 
-class ProductUpdateListenerTest extends Specification {
+class TradingQuoteListenerTest extends Specification {
 
-    def tradingProcessor = Mock(TradingService)
+    def tradingService = Mock(TradingService)
 
     def tradingRequest = new TradingRequest(
             productId: "someId",
@@ -23,7 +20,7 @@ class ProductUpdateListenerTest extends Specification {
     def productUpdateListener
 
     def setup() {
-        productUpdateListener = new ProductUpdateListener(tradingRequest, tradingProcessor)
+        productUpdateListener = new TradingQuoteListener(tradingRequest, tradingService)
     }
 
     def "test failed connection"() {
@@ -56,7 +53,7 @@ class ProductUpdateListenerTest extends Specification {
 
         then:
         //Message should be ignored
-        0 * tradingProcessor.process(* _)
+        0 * tradingService.process(* _)
     }
 
 
@@ -68,7 +65,7 @@ class ProductUpdateListenerTest extends Specification {
         productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage())
 
         then:
-        1 * tradingProcessor.process(_, tradingRequest, null) >> new TradingResult()
+        1 * tradingService.process(_, tradingRequest, null) >> new TradingResult()
     }
 
     def "test multiple trading quote messages processing"() {
@@ -81,8 +78,8 @@ class ProductUpdateListenerTest extends Specification {
         productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage())
 
         then:
-        1 * tradingProcessor.process(_, tradingRequest, null) >> tradingResult
-        1 * tradingProcessor.process(_, tradingRequest, tradingResult) >> tradingResult
+        1 * tradingService.process(_, tradingRequest, null) >> tradingResult
+        1 * tradingService.process(_, tradingRequest, tradingResult) >> tradingResult
     }
 
     def "test trading quote message processing when item was sold"() {
@@ -93,7 +90,7 @@ class ProductUpdateListenerTest extends Specification {
         productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage())
 
         then:
-        1 * tradingProcessor.process(_, tradingRequest, null) >> new TradingResult(isSold: true)
+        1 * tradingService.process(_, tradingRequest, null) >> new TradingResult(isSold: true)
         1 * webSocket.disconnect()
     }
 
@@ -106,7 +103,7 @@ class ProductUpdateListenerTest extends Specification {
         productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage("2.52"))
 
         then:
-        1 * tradingProcessor.process(_, tradingRequest, null) >> { TradingQuote tradingQuote, request , result ->
+        1 * tradingService.process(_, tradingRequest, null) >> { TradingQuote tradingQuote, request, result ->
             assert tradingQuote.currentPrice == 2.52
             return tradingResult
         }
@@ -116,7 +113,7 @@ class ProductUpdateListenerTest extends Specification {
         productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage("2.54"))
 
         then:
-        1 * tradingProcessor.process(_, tradingRequest, tradingResult) >> { TradingQuote tradingQuote, request , result ->
+        1 * tradingService.process(_, tradingRequest, tradingResult) >> { TradingQuote tradingQuote, request, result ->
             assert tradingQuote.currentPrice == 2.54
             return tradingResult
         }
@@ -126,7 +123,7 @@ class ProductUpdateListenerTest extends Specification {
         productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage("2.75"))
 
         then:
-        1 * tradingProcessor.process(_, tradingRequest, tradingResult) >> { TradingQuote tradingQuote, request , result ->
+        1 * tradingService.process(_, tradingRequest, tradingResult) >> { TradingQuote tradingQuote, request, result ->
             assert tradingQuote.currentPrice == 2.75
             def newResult = new TradingResult(result)
             newResult.isSold = true

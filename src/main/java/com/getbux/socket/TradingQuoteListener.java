@@ -11,7 +11,7 @@ import java.io.IOException;
 
 import static com.getbux.utils.JSONUtils.mapper;
 
-public class ProductUpdateListener extends WebSocketAdapter {
+public class TradingQuoteListener extends WebSocketAdapter {
 
     private final TradingService tradingService;
 
@@ -21,12 +21,7 @@ public class ProductUpdateListener extends WebSocketAdapter {
 
     private final TradingRequest tradingRequest;
 
-    public ProductUpdateListener(TradingRequest tradingRequest) {
-        this.tradingRequest = tradingRequest;
-        this.tradingService = new TradingService();
-    }
-
-    public ProductUpdateListener(TradingRequest tradingRequest, TradingService tradingService) {
+    public TradingQuoteListener(TradingRequest tradingRequest, TradingService tradingService) {
         this.tradingRequest = tradingRequest;
         this.tradingService = tradingService;
     }
