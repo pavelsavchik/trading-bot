@@ -32,14 +32,14 @@ public class TradingService {
 
         if (tradingResult.getPositionId() == null) {
             if (PriceUtils.equals(currentPrice, tradingRequest.getBuyPrice())) {
-                String positionId = apiClient.buy(tradingRequest);
+                String positionId = apiClient.buy(tradingRequest.getProductId());
                 tradingResult.setPositionId(positionId);
             }
         } else {
             if (!PriceUtils.inRange(currentPrice,
                     tradingRequest.getLowerLimitSellPrice(),
                     tradingRequest.getUpperLimitSellPrice())) {
-                apiClient.sell(tradingRequest);
+                apiClient.sell(tradingResult.getPositionId());
                 tradingResult.setSold(true);
             }
         }

@@ -7,6 +7,8 @@ public class TradingRequest {
     private Double upperLimitSellPrice;
     private Double lowerLimitSellPrice;
 
+    public TradingRequest() { }
+
     public String getProductId() {
         return productId;
     }
