@@ -1,5 +1,6 @@
 package com.getbux.api
 
+import com.getbux.common.Messages
 import org.apache.commons.io.IOUtils
 import org.apache.http.Header
 import org.apache.http.ProtocolVersion
@@ -22,7 +23,7 @@ class TradingAPIClientTest extends Specification {
         given:
         def response = Mock(CloseableHttpResponse)
         response.getStatusLine() >> new BasicStatusLine(Mock(ProtocolVersion), 200, "OK")
-        response.getEntity() >> new StringEntity(getBuyResponse("positionId"))
+        response.getEntity() >> new StringEntity(Messages.getBuyResponse("positionId"))
 
         when:
         String positionId = apiClient.buy("productId")
@@ -31,7 +32,7 @@ class TradingAPIClientTest extends Specification {
         1 * httpClient.execute(_) >> { HttpUriRequest request ->
             assert request.getMethod() == "POST"
             assert request.URI.toString() == "https://api.beta.getbux.com/core/16/users/me/trades"
-            JSONAssert.assertEquals(getBody(request), getBuyRequest("productId"), true)
+            JSONAssert.assertEquals(getBody(request), Messages.getBuyRequest("productId"), true)
             assertHeaders(request.getAllHeaders())
 
             return response
@@ -43,7 +44,7 @@ class TradingAPIClientTest extends Specification {
         given:
         def response = Mock(CloseableHttpResponse)
         response.getStatusLine() >> new BasicStatusLine(Mock(ProtocolVersion), 400, "Fail")
-        response.getEntity() >> new StringEntity(getBuyResponse("positionId"))
+        response.getEntity() >> new StringEntity(Messages.getBuyResponse("positionId"))
 
         when:
         String positionId = apiClient.buy("productId")
@@ -52,7 +53,7 @@ class TradingAPIClientTest extends Specification {
         1 * httpClient.execute(_) >> { HttpUriRequest request ->
             assert request.getMethod() == "POST"
             assert request.URI.toString() == "https://api.beta.getbux.com/core/16/users/me/trades"
-            JSONAssert.assertEquals(getBody(request), getBuyRequest("productId"), true)
+            JSONAssert.assertEquals(getBody(request), Messages.getBuyRequest("productId"), true)
             assertHeaders(request.getAllHeaders())
 
             return response
@@ -134,46 +135,4 @@ class TradingAPIClientTest extends Specification {
         return IOUtils.toString((request as HttpPost).entity.content, "UTF-8")
     }
 
-    private getBuyRequest(String productId = "productId") {
-        """
-            {
-                "productId" : "$productId",
-                "investingAmount" : {
-                    "currency": "BUX",
-                    "decimals": 2,
-                    "amount": "200.00"
-                },
-                "leverage" : 2,
-                "direction" : "BUY"
-            }
-        """
-    }
-
-    private getBuyResponse(String positionId = "positionId") {
-        """
-        {
-            "id": "98922f1a-4c10-4635-a9e6-ae19ddcd12b4",
-            "positionId": "$positionId",
-            "product": {
-                "securityId": "{productId}",
-                "symbol": "{productSymbol)",
-                "displayName": "{productName}"
-            },
-            "investingAmount": {
-                "currency": "BUX",
-                "decimals": 2,
-                "amount": "200.00"
-            }, 
-            "price": {
-                "currency": "EUR",
-                "decimals": 3,
-                "amount": "0.567"
-            },
-            "leverage": 1,
-            "direction": "BUY",
-            "type": "OPEN",
-            "dateCreated": 1405515165705
-        }
-        """
-    }
 }

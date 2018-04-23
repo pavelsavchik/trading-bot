@@ -1,5 +1,6 @@
 package com.getbux.socket
 
+import com.getbux.common.Messages
 import com.getbux.service.TradingService
 import com.getbux.common.TradingRequest
 import com.neovisionaries.ws.client.WebSocket
@@ -9,9 +10,11 @@ import spock.lang.Specification
 class TradingQuoteListenerTest extends Specification {
 
     def tradingService = Mock(TradingService)
+    
+    final PRODUCT_ID = "someId"
 
     def tradingRequest = new TradingRequest(
-            productId: "someId",
+            productId: PRODUCT_ID,
             buyPrice: 2.52,
             lowerLimitSellPrice: 2.45,
             upperLimitSellPrice: 2.70
@@ -27,7 +30,7 @@ class TradingQuoteListenerTest extends Specification {
         def webSocket = Mock(WebSocket)
 
         when:
-        productUpdateListener.onTextMessage(webSocket, getConnectFailedMessage())
+        productUpdateListener.onTextMessage(webSocket, Messages.getConnectFailedMessage())
 
         then:
         1 * webSocket.disconnect()
@@ -37,11 +40,11 @@ class TradingQuoteListenerTest extends Specification {
         def webSocket = Mock(WebSocket)
 
         when:
-        productUpdateListener.onTextMessage(webSocket, getConnectMessage())
+        productUpdateListener.onTextMessage(webSocket, Messages.getConnectMessage())
 
         then:
         1 * webSocket.sendText(_) >> { String message ->
-            JSONAssert.assertEquals(message, getSubscriptionMessage(), true)
+            JSONAssert.assertEquals(message, Messages.getSubscriptionMessage(PRODUCT_ID), true)
         }
     }
 
@@ -49,7 +52,7 @@ class TradingQuoteListenerTest extends Specification {
         def webSocket = Mock(WebSocket)
 
         when:
-        productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage())
+        productUpdateListener.onTextMessage(webSocket, Messages.getTradingQuoteMessage(PRODUCT_ID))
 
         then:
         //Message should be ignored
@@ -61,8 +64,8 @@ class TradingQuoteListenerTest extends Specification {
         def webSocket = Mock(WebSocket)
 
         when:
-        productUpdateListener.onTextMessage(webSocket, getConnectMessage())
-        productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage())
+        productUpdateListener.onTextMessage(webSocket, Messages.getConnectMessage())
+        productUpdateListener.onTextMessage(webSocket, Messages.getTradingQuoteMessage(PRODUCT_ID))
 
         then:
         1 * tradingService.process(_, tradingRequest, null) >> new TradingResult()
@@ -73,9 +76,9 @@ class TradingQuoteListenerTest extends Specification {
         def tradingResult = new TradingResult(positionId: "pos")
 
         when:
-        productUpdateListener.onTextMessage(webSocket, getConnectMessage())
-        productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage())
-        productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage())
+        productUpdateListener.onTextMessage(webSocket, Messages.getConnectMessage())
+        productUpdateListener.onTextMessage(webSocket, Messages.getTradingQuoteMessage(PRODUCT_ID))
+        productUpdateListener.onTextMessage(webSocket, Messages.getTradingQuoteMessage(PRODUCT_ID))
 
         then:
         1 * tradingService.process(_, tradingRequest, null) >> tradingResult
@@ -86,8 +89,8 @@ class TradingQuoteListenerTest extends Specification {
         def webSocket = Mock(WebSocket)
 
         when:
-        productUpdateListener.onTextMessage(webSocket, getConnectMessage())
-        productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage())
+        productUpdateListener.onTextMessage(webSocket, Messages.getConnectMessage())
+        productUpdateListener.onTextMessage(webSocket, Messages.getTradingQuoteMessage(PRODUCT_ID))
 
         then:
         1 * tradingService.process(_, tradingRequest, null) >> new TradingResult(isSold: true)
@@ -99,8 +102,8 @@ class TradingQuoteListenerTest extends Specification {
         def tradingResult = new TradingResult(positionId: "pos")
 
         when:
-        productUpdateListener.onTextMessage(webSocket, getConnectMessage())
-        productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage("2.52"))
+        productUpdateListener.onTextMessage(webSocket, Messages.getConnectMessage())
+        productUpdateListener.onTextMessage(webSocket, Messages.getTradingQuoteMessage(PRODUCT_ID,"2.52"))
 
         then:
         1 * tradingService.process(_, tradingRequest, null) >> { TradingQuote tradingQuote, request, result ->
@@ -110,7 +113,7 @@ class TradingQuoteListenerTest extends Specification {
         0 * webSocket.disconnect()
 
         when:
-        productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage("2.54"))
+        productUpdateListener.onTextMessage(webSocket, Messages.getTradingQuoteMessage(PRODUCT_ID,"2.54"))
 
         then:
         1 * tradingService.process(_, tradingRequest, tradingResult) >> { TradingQuote tradingQuote, request, result ->
@@ -120,7 +123,7 @@ class TradingQuoteListenerTest extends Specification {
         0 * webSocket.disconnect()
 
         when:
-        productUpdateListener.onTextMessage(webSocket, getTradingQuoteMessage("2.75"))
+        productUpdateListener.onTextMessage(webSocket, Messages.getTradingQuoteMessage(PRODUCT_ID,"2.75"))
 
         then:
         1 * tradingService.process(_, tradingRequest, tradingResult) >> { TradingQuote tradingQuote, request, result ->
@@ -132,50 +135,5 @@ class TradingQuoteListenerTest extends Specification {
         1 * webSocket.disconnect()
 
     }
-
-    private String getConnectMessage() {
-        return """
-            {
-                "t": "connect.connected",
-                "body": {}
-            }
-        """
-    }
-
-    private String getConnectFailedMessage() {
-        return """
-            {
-                "t": "connect.failed",
-                "body": {
-                    "developerMessage": "Missing JWT Access Token in request",
-                    "errorCode": "RTF_002"
-                }
-            }
-        """
-    }
-
-    private String getSubscriptionMessage() {
-        return """
-            {
-               "subscribeTo": [
-                  "trading.product.${tradingRequest.getProductId()}"
-               ],
-               "unsubscribeFrom": null
-            }
-        """
-    }
-
-    private String getTradingQuoteMessage(String currentPrice = "2.52") {
-        return """
-            {
-               "t": "trading.quote",
-               "body": {
-                  "securityId": "${tradingRequest.getProductId()}",
-                  "currentPrice": "$currentPrice"
-               }
-            }        
-        """
-    }
-
 
 }

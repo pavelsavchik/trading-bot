@@ -2,7 +2,7 @@ package com.getbux.common
 
 class Messages {
 
-    public static String getConnectMessage() {
+    static String getConnectMessage() {
         return """
             {
                 "t": "connect.connected",
@@ -11,7 +11,7 @@ class Messages {
         """
     }
 
-    public static String getConnectFailedMessage() {
+    static String getConnectFailedMessage() {
         return """
             {
                 "t": "connect.failed",
@@ -23,7 +23,7 @@ class Messages {
         """
     }
 
-    public static String getSubscriptionMessage(String productId) {
+    static String getSubscriptionMessage(String productId) {
         return """
             {
                "subscribeTo": [
@@ -34,7 +34,7 @@ class Messages {
         """
     }
 
-    public static String getTradingQuoteMessage(String currentPrice, String productId) {
+    static String getTradingQuoteMessage(String productId, String currentPrice = "2.52") {
         return """
             {
                "t": "trading.quote",
@@ -46,7 +46,22 @@ class Messages {
         """
     }
 
-    static getBuyResponse(String positionId = "positionId") {
+    static String getBuyRequest(String productId = "productId") {
+        """
+            {
+                "productId" : "$productId",
+                "investingAmount" : {
+                    "currency": "BUX",
+                    "decimals": 2,
+                    "amount": "200.00"
+                },
+                "leverage" : 2,
+                "direction" : "BUY"
+            }
+        """
+    }
+
+    static String getBuyResponse(String positionId = "positionId") {
         """
         {
             "id": "98922f1a-4c10-4635-a9e6-ae19ddcd12b4",

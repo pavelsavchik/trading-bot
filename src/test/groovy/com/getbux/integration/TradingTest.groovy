@@ -38,25 +38,25 @@ class TradingTest extends Specification {
         0 * tradingAPIClient._
 
         when:
-        listener.onTextMessage(socket, Messages.getTradingQuoteMessage("11.5", "sb12345"))
+        listener.onTextMessage(socket, Messages.getTradingQuoteMessage("sb12345", "11.5"))
 
         then:
         0 * tradingAPIClient._
 
         when:
-        listener.onTextMessage(socket, Messages.getTradingQuoteMessage("12.2", "sb12345"))
+        listener.onTextMessage(socket, Messages.getTradingQuoteMessage("sb12345", "12.2"))
 
         then:
         1 * tradingAPIClient.buy("sb12345") >> "positionId"
 
         when:
-        listener.onTextMessage(socket, Messages.getTradingQuoteMessage("11.5", "sb12345"))
+        listener.onTextMessage(socket, Messages.getTradingQuoteMessage("sb12345","11.5"))
 
         then:
         0 * tradingAPIClient._
 
         when:
-        listener.onTextMessage(socket, Messages.getTradingQuoteMessage("11", "sb12345"))
+        listener.onTextMessage(socket, Messages.getTradingQuoteMessage("sb12345", "11"))
 
         then:
         1 * tradingAPIClient.sell("positionId") >> true
