@@ -70,7 +70,7 @@ class TradingQuoteListenerTest extends Specification {
 
     def "test multiple trading quote messages processing"() {
         def webSocket = Mock(WebSocket)
-        def tradingResult = new TradingResult(isBought: true, positionId: "pos")
+        def tradingResult = new TradingResult(positionId: "pos")
 
         when:
         productUpdateListener.onTextMessage(webSocket, getConnectMessage())
@@ -96,7 +96,7 @@ class TradingQuoteListenerTest extends Specification {
 
     def "test full trading quote messages flow"() {
         def webSocket = Mock(WebSocket)
-        def tradingResult = new TradingResult(isBought: true, positionId: "pos")
+        def tradingResult = new TradingResult(positionId: "pos")
 
         when:
         productUpdateListener.onTextMessage(webSocket, getConnectMessage())
