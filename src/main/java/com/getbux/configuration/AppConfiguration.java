@@ -90,7 +90,7 @@ public class AppConfiguration {
     }
 
     private static void terminate() {
-        System.out.println("Failed configuration loading.");
+        System.out.println("Failed configuration loading");
         System.exit(0);
     }
 

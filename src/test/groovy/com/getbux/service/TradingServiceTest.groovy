@@ -41,6 +41,18 @@ class TradingServiceTest extends Specification {
         !result.sold
     }
 
+    def "test buy when price matches buy buying failed"() {
+        when:
+        def result = tradingService.process(new TradingQuote(currentPrice: 10.4), tradingRequest, null)
+
+        then:
+        1 * apiClient.buy(tradingRequest.getProductId()) >> null
+        0 * apiClient.sell(_)
+        !result.positionId
+        !result.sold
+    }
+
+
     def "test sell when price in range"() {
         when:
         def result = tradingService.process(
@@ -94,9 +106,24 @@ class TradingServiceTest extends Specification {
 
         then:
         0 * apiClient.buy(_)
-        1 * apiClient.sell("positionId")
+        1 * apiClient.sell("positionId") >> true
         result.positionId == "positionId"
         result.sold
+    }
+
+    def "test sell when price is higher but selling failed"() {
+        when:
+        def result = tradingService.process(
+                new TradingQuote(currentPrice: 14),
+                tradingRequest,
+                new TradingResult(positionId: "positionId", isSold: false)
+        )
+
+        then:
+        0 * apiClient.buy(_)
+        1 * apiClient.sell("positionId") >> false
+        result.positionId == "positionId"
+        !result.sold
     }
 
     def "test sell when price is lower"() {
@@ -109,9 +136,24 @@ class TradingServiceTest extends Specification {
 
         then:
         0 * apiClient.buy(_)
-        1 * apiClient.sell("positionId")
+        1 * apiClient.sell("positionId") >> true
         result.positionId == "positionId"
         result.sold
+    }
+
+    def "test sell when price is lower but selling failed"() {
+        when:
+        def result = tradingService.process(
+                new TradingQuote(currentPrice: 8.66),
+                tradingRequest,
+                new TradingResult(positionId: "positionId", isSold: false)
+        )
+
+        then:
+        0 * apiClient.buy(_)
+        1 * apiClient.sell("positionId") >> false
+        result.positionId == "positionId"
+        !result.sold
     }
 
     def "test full flow"() {
@@ -147,7 +189,7 @@ class TradingServiceTest extends Specification {
 
         then:
         0 * apiClient.buy(_)
-        1 * apiClient.sell("positionId")
+        1 * apiClient.sell("positionId") >> true
         result.positionId == "positionId"
         result.sold
     }

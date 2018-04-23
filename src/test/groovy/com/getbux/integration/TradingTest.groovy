@@ -59,7 +59,7 @@ class TradingTest extends Specification {
         listener.onTextMessage(socket, Messages.getTradingQuoteMessage("11", "sb12345"))
 
         then:
-        1 * tradingAPIClient.sell("positionId")
+        1 * tradingAPIClient.sell("positionId") >> true
         1 * socket.disconnect()
     }
 

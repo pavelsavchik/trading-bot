@@ -2,12 +2,13 @@ package com.getbux.api
 
 import org.apache.commons.io.IOUtils
 import org.apache.http.Header
-import org.apache.http.StatusLine
+import org.apache.http.ProtocolVersion
 import org.apache.http.client.methods.CloseableHttpResponse
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.client.methods.HttpUriRequest
 import org.apache.http.entity.StringEntity
 import org.apache.http.impl.client.CloseableHttpClient
+import org.apache.http.message.BasicStatusLine
 import org.skyscreamer.jsonassert.JSONAssert
 import spock.lang.Specification
 
@@ -20,8 +21,8 @@ class TradingAPIClientTest extends Specification {
     def "test buy"() {
         given:
         def response = Mock(CloseableHttpResponse)
-        response.getStatusLine() >> Mock(StatusLine)
-        response.getEntity() >> new StringEntity(getBuyResponse("positionId"));
+        response.getStatusLine() >> new BasicStatusLine(Mock(ProtocolVersion), 200, "OK")
+        response.getEntity() >> new StringEntity(getBuyResponse("positionId"))
 
         when:
         String positionId = apiClient.buy("productId")
@@ -31,11 +32,32 @@ class TradingAPIClientTest extends Specification {
             assert request.getMethod() == "POST"
             assert request.URI.toString() == "https://api.beta.getbux.com/core/16/users/me/trades"
             JSONAssert.assertEquals(getBody(request), getBuyRequest("productId"), true)
-            assertHeaders(request.getAllHeaders());
+            assertHeaders(request.getAllHeaders())
 
             return response
         }
         positionId == "positionId"
+    }
+
+    def "test buy with error response"() {
+        given:
+        def response = Mock(CloseableHttpResponse)
+        response.getStatusLine() >> new BasicStatusLine(Mock(ProtocolVersion), 400, "Fail")
+        response.getEntity() >> new StringEntity(getBuyResponse("positionId"))
+
+        when:
+        String positionId = apiClient.buy("productId")
+
+        then:
+        1 * httpClient.execute(_) >> { HttpUriRequest request ->
+            assert request.getMethod() == "POST"
+            assert request.URI.toString() == "https://api.beta.getbux.com/core/16/users/me/trades"
+            JSONAssert.assertEquals(getBody(request), getBuyRequest("productId"), true)
+            assertHeaders(request.getAllHeaders())
+
+            return response
+        }
+        !positionId
     }
 
     def "test buy with null productId"() {
@@ -50,19 +72,20 @@ class TradingAPIClientTest extends Specification {
     def "test sell"() {
         given:
         def response = Mock(CloseableHttpResponse)
-        response.getStatusLine() >> Mock(StatusLine)
+        response.getStatusLine() >> new BasicStatusLine(Mock(ProtocolVersion), 200, "OK")
         response.getEntity() >> new StringEntity("{}")
 
         when:
-        apiClient.sell("somepositionid")
+        def result = apiClient.sell("somepositionid")
 
         then:
         1 * httpClient.execute(_) >> { HttpUriRequest request ->
             assert request.getMethod() == "DELETE"
-            assertHeaders(request.getAllHeaders());
+            assertHeaders(request.getAllHeaders())
             assert request.URI.toString() == "https://api.beta.getbux.com/core/16/users/me/portfolio/positions/somepositionid"
             return response
         }
+        result
     }
 
     def "test sell with null positionId"() {
@@ -71,6 +94,25 @@ class TradingAPIClientTest extends Specification {
 
         then:
         0 * httpClient.execute(_)
+    }
+
+    def "test sell with error response"() {
+        given:
+        def response = Mock(CloseableHttpResponse)
+        response.getStatusLine() >> new BasicStatusLine(Mock(ProtocolVersion), 400, "OK")
+        response.getEntity() >> new StringEntity("{}")
+
+        when:
+        def result = apiClient.sell("somepositionid")
+
+        then:
+        1 * httpClient.execute(_) >> { HttpUriRequest request ->
+            assert request.getMethod() == "DELETE"
+            assertHeaders(request.getAllHeaders())
+            assert request.URI.toString() == "https://api.beta.getbux.com/core/16/users/me/portfolio/positions/somepositionid"
+            return response
+        }
+        !result
     }
 
     private void assertHeaders(Header[] headers) {

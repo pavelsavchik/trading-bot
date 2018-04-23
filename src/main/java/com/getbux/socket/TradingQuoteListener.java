@@ -61,7 +61,7 @@ public class TradingQuoteListener extends WebSocketAdapter {
 
     private void processConnectMessage(WebSocket socket) throws JsonProcessingException {
         isConnected = true;
-        System.out.println("Connected successfully!");
+        System.out.println("Connected successfully");
     }
 
     private void subscribeToProductCode(WebSocket socket) throws JsonProcessingException {
@@ -82,7 +82,7 @@ public class TradingQuoteListener extends WebSocketAdapter {
             try {
                 tradingQuote = mapper.convertValue(eventMessage.getBody(), TradingQuote.class);
             } catch (IllegalArgumentException exception) {
-                System.out.println("Failed trading quote message processing, message is ignored.");
+                System.out.println("Failed trading quote message processing, message is ignored");
                 return;
             }
             System.out.println("Current price is " + tradingQuote.getCurrentPrice());

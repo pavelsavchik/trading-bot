@@ -29,7 +29,7 @@ public class TradingRequestReader {
                 consoleReader.readDouble(0., tradingRequest.getBuyPrice())
         );
 
-        System.out.println("I got you! Now please wait.");
+        System.out.println("I got you! Now please wait");
 
         return tradingRequest;
     }

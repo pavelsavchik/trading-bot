@@ -39,8 +39,8 @@ public class TradingService {
             if (!PriceUtils.inRange(currentPrice,
                     tradingRequest.getLowerLimitSellPrice(),
                     tradingRequest.getUpperLimitSellPrice())) {
-                apiClient.sell(tradingResult.getPositionId());
-                tradingResult.setSold(true);
+                Boolean isSold = apiClient.sell(tradingResult.getPositionId());
+                tradingResult.setSold(isSold);
             }
         }
 

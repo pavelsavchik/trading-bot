@@ -50,7 +50,7 @@ class ConsoleReader {
 
     private void logError(String error) {
         if (StringUtils.isNotEmpty(error)) {
-            System.out.println(error + ". Please try again.");
+            System.out.println(error + ", please try again");
         }
     }
 

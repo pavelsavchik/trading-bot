@@ -1,6 +1,7 @@
 package com.getbux.api;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -37,22 +38,34 @@ public class TradingAPIClient {
 
         request.setEntity(new StringEntity(body));
         HttpResponse response = executeWithHeaders(request);
-        System.out.println("Product is bought");
 
-        String responseBody = EntityUtils.toString(response.getEntity());
-        return mapper.readValue(responseBody, BuyResponse.class).getPositionId();
+        if(response.getStatusLine() != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            System.out.println("Product is bought");
+            String responseBody = EntityUtils.toString(response.getEntity());
+            return mapper.readValue(responseBody, BuyResponse.class).getPositionId();
+        } else {
+            System.out.println("Product buying failed");
+            return null;
+        }
     }
 
-    public void sell(String positionId) throws IOException {
+    public Boolean sell(String positionId) throws IOException {
         if(positionId == null) {
-            return;
+            return false;
         }
 
         String url = API_URL + SELL_PATH + positionId;
         HttpDelete request = new HttpDelete(url);
 
         HttpResponse response = executeWithHeaders(request);
-        System.out.println("Product is sold");
+        if(response.getStatusLine() != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            System.out.println("Product is sold");
+            return true;
+        } else {
+            System.out.println("Product selling failed");
+            return false;
+        }
+
     }
 
     private HttpResponse executeWithHeaders(HttpUriRequest request) throws IOException {
