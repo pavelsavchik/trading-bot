@@ -74,7 +74,7 @@ class TradingAPIClientTest extends Specification {
         given:
         def response = Mock(CloseableHttpResponse)
         response.getStatusLine() >> new BasicStatusLine(Mock(ProtocolVersion), 200, "OK")
-        response.getEntity() >> new StringEntity("{}")
+        response.getEntity() >> new StringEntity(Messages.getSellResponse())
 
         when:
         def result = apiClient.sell("somepositionid")
@@ -101,7 +101,7 @@ class TradingAPIClientTest extends Specification {
         given:
         def response = Mock(CloseableHttpResponse)
         response.getStatusLine() >> new BasicStatusLine(Mock(ProtocolVersion), 400, "OK")
-        response.getEntity() >> new StringEntity("{}")
+        response.getEntity() >> new StringEntity(Messages.getSellResponse())
 
         when:
         def result = apiClient.sell("somepositionid")

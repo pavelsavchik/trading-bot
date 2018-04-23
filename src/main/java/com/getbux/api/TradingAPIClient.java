@@ -59,7 +59,8 @@ public class TradingAPIClient {
 
         HttpResponse response = executeWithHeaders(request);
         if(response.getStatusLine() != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-            System.out.println("Product is sold");
+            String profitAndLossAmount = mapper.readValue(EntityUtils.toString(response.getEntity()), SellResponse.class).getProfitAndLossAmount();
+            System.out.println("Product is sold with profit/loss " + profitAndLossAmount);
             return true;
         } else {
             System.out.println("Product selling failed");
