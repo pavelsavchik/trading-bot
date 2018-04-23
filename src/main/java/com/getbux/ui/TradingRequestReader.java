@@ -11,6 +11,7 @@ public class TradingRequestReader {
         TradingRequest tradingRequest = new TradingRequest();
         ConsoleReader consoleReader = new ConsoleReader();
 
+        System.out.println("Hi, I'm trading bot");
         System.out.println("Please specify product id:");
         tradingRequest.setProductId(consoleReader.readString());
 
