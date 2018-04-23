@@ -37,7 +37,7 @@ public class TradingQuoteListener extends WebSocketAdapter {
 
         switch (eventMessage.getType()) {
             case "connect.connected":
-                processConnectMessage(socket);
+                processConnectMessage();
                 subscribeToProductCode(socket);
                 break;
             case "connect.failed":
@@ -59,7 +59,7 @@ public class TradingQuoteListener extends WebSocketAdapter {
         System.out.println("Disconnected");
     }
 
-    private void processConnectMessage(WebSocket socket) throws JsonProcessingException {
+    private void processConnectMessage() throws JsonProcessingException {
         isConnected = true;
         System.out.println("Connected successfully, waiting for quotes");
     }
