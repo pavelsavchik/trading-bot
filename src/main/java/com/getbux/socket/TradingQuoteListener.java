@@ -61,7 +61,7 @@ public class TradingQuoteListener extends WebSocketAdapter {
 
     private void processConnectMessage(WebSocket socket) throws JsonProcessingException {
         isConnected = true;
-        System.out.println("Connected successfully");
+        System.out.println("Connected successfully, waiting for quotes");
     }
 
     private void subscribeToProductCode(WebSocket socket) throws JsonProcessingException {
