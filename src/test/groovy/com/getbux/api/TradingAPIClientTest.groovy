@@ -17,7 +17,7 @@ class TradingAPIClientTest extends Specification {
 
     def httpClient = Mock(CloseableHttpClient)
 
-    def apiClient = new TradingAPIClient(httpClient)
+    def tradingClient = new TradingAPIClient(httpClient)
 
     def "test buy"() {
         given:
@@ -26,7 +26,7 @@ class TradingAPIClientTest extends Specification {
         response.getEntity() >> new StringEntity(Messages.getBuyResponse("positionId"))
 
         when:
-        String positionId = apiClient.buy("productId")
+        String positionId = tradingClient.buy("productId")
 
         then:
         1 * httpClient.execute(_) >> { HttpUriRequest request ->
@@ -47,7 +47,7 @@ class TradingAPIClientTest extends Specification {
         response.getEntity() >> new StringEntity(Messages.getBuyResponse("positionId"))
 
         when:
-        String positionId = apiClient.buy("productId")
+        String positionId = tradingClient.buy("productId")
 
         then:
         1 * httpClient.execute(_) >> { HttpUriRequest request ->
@@ -61,9 +61,18 @@ class TradingAPIClientTest extends Specification {
         !positionId
     }
 
+    def "test buy with IOException when sending request"() {
+        when:
+        String positionId = tradingClient.buy("productId")
+
+        then:
+        1 * httpClient.execute(_) >> { throw new IOException() }
+        !positionId
+    }
+
     def "test buy with null productId"() {
         when:
-        String positionId = apiClient.buy(null)
+        String positionId = tradingClient.buy(null)
 
         then:
         0 * httpClient.execute(_)
@@ -77,7 +86,7 @@ class TradingAPIClientTest extends Specification {
         response.getEntity() >> new StringEntity(Messages.getSellResponse())
 
         when:
-        def result = apiClient.sell("somepositionid")
+        def result = tradingClient.sell("somepositionid")
 
         then:
         1 * httpClient.execute(_) >> { HttpUriRequest request ->
@@ -91,7 +100,7 @@ class TradingAPIClientTest extends Specification {
 
     def "test sell with null positionId"() {
         when:
-        apiClient.sell(null)
+        tradingClient.sell(null)
 
         then:
         0 * httpClient.execute(_)
@@ -104,7 +113,7 @@ class TradingAPIClientTest extends Specification {
         response.getEntity() >> new StringEntity(Messages.getSellResponse())
 
         when:
-        def result = apiClient.sell("somepositionid")
+        def result = tradingClient.sell("somepositionid")
 
         then:
         1 * httpClient.execute(_) >> { HttpUriRequest request ->
@@ -115,6 +124,17 @@ class TradingAPIClientTest extends Specification {
         }
         !result
     }
+
+
+    def "test sell with IOException when sending request"() {
+        when:
+        def result = tradingClient.sell("somepositionid")
+
+        then:
+        1 * httpClient.execute(_) >> { throw new IOException() }
+        !result
+    }
+
 
     private void assertHeaders(Header[] headers) {
         assert headers.size() == 4

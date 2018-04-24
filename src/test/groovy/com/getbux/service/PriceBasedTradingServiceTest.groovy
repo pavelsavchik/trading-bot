@@ -1,16 +1,16 @@
 package com.getbux.service
 
-import com.getbux.api.TradingAPIClient
+import com.getbux.api.TradingClient
 import com.getbux.common.TradingRequest
 import com.getbux.socket.TradingQuote
 import com.getbux.socket.TradingResult
 import spock.lang.Specification
 
-class TradingServiceTest extends Specification {
+class PriceBasedTradingServiceTest extends Specification {
 
-    final apiClient = Mock(TradingAPIClient)
+    final tradingClient = Mock(TradingClient)
 
-    final tradingService = new TradingService(apiClient)
+    final tradingService = new PriceBasedTradingService(tradingClient)
 
     final tradingRequest = new TradingRequest(
             productId:"sb12345",
@@ -24,8 +24,8 @@ class TradingServiceTest extends Specification {
         def result = tradingService.process(new TradingQuote(currentPrice: 10.5), tradingRequest, null)
 
         then:
-        0 * apiClient.buy(_)
-        0 * apiClient.sell(_)
+        0 * tradingClient.buy(_)
+        0 * tradingClient.sell(_)
         !result.positionId
         !result.sold
     }
@@ -35,8 +35,8 @@ class TradingServiceTest extends Specification {
         def result = tradingService.process(new TradingQuote(currentPrice: 10.4), tradingRequest, null)
 
         then:
-        1 * apiClient.buy(tradingRequest.getProductId()) >> "positionId"
-        0 * apiClient.sell(_)
+        1 * tradingClient.buy(tradingRequest.getProductId()) >> "positionId"
+        0 * tradingClient.sell(_)
         result.positionId == "positionId"
         !result.sold
     }
@@ -46,8 +46,8 @@ class TradingServiceTest extends Specification {
         def result = tradingService.process(new TradingQuote(currentPrice: 10.4), tradingRequest, null)
 
         then:
-        1 * apiClient.buy(tradingRequest.getProductId()) >> null
-        0 * apiClient.sell(_)
+        1 * tradingClient.buy(tradingRequest.getProductId()) >> null
+        0 * tradingClient.sell(_)
         !result.positionId
         !result.sold
     }
@@ -62,8 +62,8 @@ class TradingServiceTest extends Specification {
         )
 
         then:
-        0 * apiClient.buy(_)
-        0 * apiClient.sell(_)
+        0 * tradingClient.buy(_)
+        0 * tradingClient.sell(_)
         result.positionId == "positionId"
         !result.sold
     }
@@ -77,8 +77,8 @@ class TradingServiceTest extends Specification {
         )
 
         then:
-        0 * apiClient.buy(_)
-        0 * apiClient.sell(_)
+        0 * tradingClient.buy(_)
+        0 * tradingClient.sell(_)
         !result
     }
 
@@ -91,8 +91,8 @@ class TradingServiceTest extends Specification {
         )
 
         then:
-        0 * apiClient.buy(_)
-        0 * apiClient.sell(_)
+        0 * tradingClient.buy(_)
+        0 * tradingClient.sell(_)
         !result
     }
 
@@ -105,8 +105,8 @@ class TradingServiceTest extends Specification {
         )
 
         then:
-        0 * apiClient.buy(_)
-        1 * apiClient.sell("positionId") >> true
+        0 * tradingClient.buy(_)
+        1 * tradingClient.sell("positionId") >> true
         result.positionId == "positionId"
         result.sold
     }
@@ -120,8 +120,8 @@ class TradingServiceTest extends Specification {
         )
 
         then:
-        0 * apiClient.buy(_)
-        1 * apiClient.sell("positionId") >> false
+        0 * tradingClient.buy(_)
+        1 * tradingClient.sell("positionId") >> false
         result.positionId == "positionId"
         !result.sold
     }
@@ -135,8 +135,8 @@ class TradingServiceTest extends Specification {
         )
 
         then:
-        0 * apiClient.buy(_)
-        1 * apiClient.sell("positionId") >> true
+        0 * tradingClient.buy(_)
+        1 * tradingClient.sell("positionId") >> true
         result.positionId == "positionId"
         result.sold
     }
@@ -150,8 +150,8 @@ class TradingServiceTest extends Specification {
         )
 
         then:
-        0 * apiClient.buy(_)
-        1 * apiClient.sell("positionId") >> false
+        0 * tradingClient.buy(_)
+        1 * tradingClient.sell("positionId") >> false
         result.positionId == "positionId"
         !result.sold
     }
@@ -161,8 +161,8 @@ class TradingServiceTest extends Specification {
         def result = tradingService.process(new TradingQuote(currentPrice: 10.5), tradingRequest, null)
 
         then:
-        0 * apiClient.buy(_)
-        0 * apiClient.sell(_)
+        0 * tradingClient.buy(_)
+        0 * tradingClient.sell(_)
         !result.positionId
         !result.sold
 
@@ -170,8 +170,8 @@ class TradingServiceTest extends Specification {
         result = tradingService.process(new TradingQuote(currentPrice: 10.4), tradingRequest, result)
 
         then:
-        1 * apiClient.buy(tradingRequest.getProductId()) >> "positionId"
-        0 * apiClient.sell(_)
+        1 * tradingClient.buy(tradingRequest.getProductId()) >> "positionId"
+        0 * tradingClient.sell(_)
         result.positionId == "positionId"
         !result.sold
 
@@ -179,8 +179,8 @@ class TradingServiceTest extends Specification {
         result = tradingService.process(new TradingQuote(currentPrice: 10.4), tradingRequest, result)
 
         then:
-        0 * apiClient.buy(_)
-        0 * apiClient.sell(_)
+        0 * tradingClient.buy(_)
+        0 * tradingClient.sell(_)
         result.positionId == "positionId"
         !result.sold
 
@@ -188,8 +188,8 @@ class TradingServiceTest extends Specification {
         result = tradingService.process(new TradingQuote(currentPrice: 12), tradingRequest, result)
 
         then:
-        0 * apiClient.buy(_)
-        1 * apiClient.sell("positionId") >> true
+        0 * tradingClient.buy(_)
+        1 * tradingClient.sell("positionId") >> true
         result.positionId == "positionId"
         result.sold
     }

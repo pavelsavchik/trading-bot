@@ -1,7 +1,8 @@
 package com.getbux.integration
 
-import com.getbux.api.TradingAPIClient
+import com.getbux.api.TradingClient
 import com.getbux.service.TradingService
+import com.getbux.service.PriceBasedTradingService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import spock.lang.Specification
@@ -10,13 +11,13 @@ import spock.lang.Specification
 class MockBeansConfiguration extends Specification {
 
     @Bean
-    TradingAPIClient apiClient() {
-        return Mock(TradingAPIClient)
+    TradingClient client() {
+        return Mock(TradingClient)
     }
 
     @Bean
-    TradingService tradingService(TradingAPIClient apiClient) {
-        return new TradingService(apiClient)
+    TradingService tradingService(TradingClient tradingClient) {
+        return new PriceBasedTradingService(tradingClient)
     }
 
 }

@@ -1,6 +1,6 @@
 package com.getbux.integration
 
-import com.getbux.api.TradingAPIClient
+import com.getbux.api.TradingClient
 import com.getbux.common.Messages
 import com.getbux.common.TradingRequest
 import com.getbux.service.TradingService
@@ -15,7 +15,7 @@ import spock.lang.Specification
 class TradingTest extends Specification {
 
     @Autowired
-    TradingAPIClient tradingAPIClient
+    TradingClient tradingClient
 
     @Autowired
     TradingService tradingService
@@ -35,31 +35,31 @@ class TradingTest extends Specification {
         listener.onTextMessage(socket, Messages.getConnectMessage())
 
         then:
-        0 * tradingAPIClient._
+        0 * tradingClient._
 
         when:
         listener.onTextMessage(socket, Messages.getTradingQuoteMessage("sb12345", "11.5"))
 
         then:
-        0 * tradingAPIClient._
+        0 * tradingClient._
 
         when:
         listener.onTextMessage(socket, Messages.getTradingQuoteMessage("sb12345", "12.2"))
 
         then:
-        1 * tradingAPIClient.buy("sb12345") >> "positionId"
+        1 * tradingClient.buy("sb12345") >> "positionId"
 
         when:
         listener.onTextMessage(socket, Messages.getTradingQuoteMessage("sb12345","11.5"))
 
         then:
-        0 * tradingAPIClient._
+        0 * tradingClient._
 
         when:
         listener.onTextMessage(socket, Messages.getTradingQuoteMessage("sb12345", "11"))
 
         then:
-        1 * tradingAPIClient.sell("positionId") >> true
+        1 * tradingClient.sell("positionId") >> true
         1 * socket.disconnect()
     }
 

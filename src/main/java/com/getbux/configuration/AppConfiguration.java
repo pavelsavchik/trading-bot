@@ -3,6 +3,7 @@ package com.getbux.configuration;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.http.entity.StringEntity;
 
 import java.io.File;
 
@@ -12,7 +13,11 @@ public class AppConfiguration {
 
     public static final String BUY_PATH;
 
+    public static final String BUY_URL;
+
     public static final String SELL_PATH;
+
+    public static final String SELL_URL;
 
     public static final String SUBSCRIPTION_URL;
 
@@ -65,6 +70,8 @@ public class AppConfiguration {
         API_URL = config.getString("api.url");
         BUY_PATH = config.getString("api.buy.path");
         SELL_PATH = config.getString("api.sell.path");
+        BUY_URL = API_URL + BUY_PATH;
+        SELL_URL = API_URL + SELL_PATH;
 
         SUBSCRIPTION_URL = config.getString("socket.subscription.url");
         SOCKET_CONNECTION_TIMEOUT = config.getInt("socket.connection.timeout");
