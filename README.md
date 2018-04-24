@@ -5,6 +5,6 @@ How to run:
 
 `./gradlew fatJar`
 
-`java -jar build/libs/trading-bot-1.0-SNAPSHOT.jar`
+`java -jar build/libs/trading-bot-1.0.jar`
 
 You need to specify product id (e.g. sb26493), buy price, upper and lower sell prices.
